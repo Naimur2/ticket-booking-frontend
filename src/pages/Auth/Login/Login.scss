@@ -1,0 +1,13 @@
+@use "../../../styles/partials/" as *;
+
+.auth-form {
+    width: 100%;
+    @include breakpoint(xs) {
+        width: 100%;
+    }
+    @include breakpoint(lg) {
+        width: 50%;
+        padding-top: 5rem;
+        margin: 0 auto;
+    }
+}
