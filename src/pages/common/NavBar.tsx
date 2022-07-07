@@ -1,14 +1,20 @@
 import { Container, Nav, Navbar } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 export default function NavBar() {
     return (
         <Navbar bg="dark" variant="dark">
             <Container>
-                <Navbar.Brand href="#home">Navbar</Navbar.Brand>
+                <Link className="navbar-brand" to="/">
+                    ZTicket
+                </Link>
                 <Nav className="me-auto">
-                    <Nav.Link href="#home">Home</Nav.Link>
-                    <Nav.Link href="#features">Features</Nav.Link>
-                    <Nav.Link href="#pricing">Pricing</Nav.Link>
+                    <Link className="nav-link" to="/login">
+                        Login
+                    </Link>
+                    <Link className="nav-link" to="/register">
+                        Register
+                    </Link>
                 </Nav>
             </Container>
         </Navbar>
