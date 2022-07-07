@@ -16,4 +16,27 @@ export interface IAuthContext {
     validateToken?: () => Promise<void>;
     register?: (user: IUser) => Promise<void>;
     isLoading: boolean;
+    clean?: () => void;
+}
+
+export interface ILocation {
+    _id?: string;
+    name: string;
+    address: string;
+    phone: string;
+    email: string;
+    description: string;
+    image?: string;
+}
+
+export interface IAddLocationState {
+    locations: ILocation[] | null;
+    isLoading: boolean;
+    error: string | null;
+    addLocation?: (location: ILocation) => Promise<void>;
+    getAllLocations?: () => Promise<void>;
+    getLoationById?: (id: string) => Promise<void>;
+    updateLocation?: (location: ILocation) => Promise<void>;
+    deleteLocation?: (id: string) => Promise<void>;
+    clean?: () => void;
 }

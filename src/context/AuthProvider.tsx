@@ -2,6 +2,7 @@ import { IAuthContext, IUser } from "../interfaces/index";
 import React from "react";
 import { AuthContext } from "./contexts";
 import axios, { AxiosResponse } from "axios";
+import { useNavigate } from "react-router-dom";
 
 interface IData {
     message: string;
@@ -36,26 +37,33 @@ const reducer = (state: IAuthContext, action: any) => {
         case "LOADING":
             return {
                 ...state,
-                isLoading: true,
+                isLoading: action.payload,
             };
+        case "CLEAN":
+            return {
+                ...defaultState,
+            };
+
         default:
             return state;
     }
 };
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+    const navigate = useNavigate();
     const [state, dispatch] = React.useReducer(reducer, defaultState);
 
     const values = React.useMemo(() => {
         const loginHandler = async (email: string, password: string) => {
             try {
-                dispatch({ type: "LOADING" });
+                dispatch({ type: "LOADING", payload: true });
                 const response: AxiosResponse<IData> = await axios.post(
                     `/api/auth/login`,
                     { email, password },
                     { withCredentials: true }
                 );
-                if (res.status === 200 || res.status === 201) {
+                dispatch({ type: "LOADING", payload: false });
+                if (response.status === 200 || response.status === 201) {
                     localStorage.setItem(
                         "token",
                         response?.data?.access_token as string
@@ -65,25 +73,27 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                     alert(response.data.message);
                 }
             } catch (error: any) {
+                console.log(error);
                 alert("Authentication failed");
             }
         };
 
         const logoutHandler = () => {
-            console.log("logout");
+            localStorage.removeItem("token");
             dispatch({ type: "LOGOUT" });
+            navigate("/");
         };
 
         const registerHandler = async (user: IUser) => {
             console.log("register", user);
             try {
-                dispatch({ type: "LOADING" });
+                dispatch({ type: "LOADING", payload: true });
                 const res: AxiosResponse<IData> = await axios.post(
                     "/api/auth/register",
                     user
                 );
 
-                console.log(res);
+                dispatch({ type: "LOADING", payload: false });
 
                 if (res.status === 200 || res.status === 201) {
                     localStorage.setItem(
@@ -101,23 +111,28 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         const validateTokenHandler = async () => {
             try {
-                dispatch({ type: "LOADING" });
                 const token = localStorage.getItem("token");
+                if (token) {
+                    dispatch({ type: "LOADING", payload: true });
+                    const res: AxiosResponse<IData> = await axios.get(
+                        "/api/auth/validate",
+                        {
+                            headers: { Authorization: `Bearer ${token}` },
+                        }
+                    );
+                    dispatch({ type: "LOADING", payload: false });
 
-                const res: AxiosResponse<IData> = await axios.get(
-                    "/api/auth/validate",
-                    {
-                        headers: { Authorization: `Bearer ${token}` },
+                    if (res.status === 200 || res.status === 201) {
+                        console.log(res.data);
+                        dispatch({ type: "LOGIN", payload: res?.data?.user });
+                    } else {
+                        navigate("/");
                     }
-                );
-                if (res.status === 200 || res.status === 201) {
-                    console.log(res.data);
-                    dispatch({ type: "LOGIN", payload: res?.data?.user });
                 } else {
-                    alert("Validation failed");
+                    navigate("/");
                 }
             } catch (error: any) {
-                alert("validation", error.message);
+                navigate("/");
             }
         };
 
@@ -129,6 +144,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             logout: logoutHandler,
             register: registerHandler,
             validateToken: validateTokenHandler,
+            clean: () => dispatch({ type: "CLEAN" }),
         };
 
         return returntVal;
