@@ -4,7 +4,7 @@ import { IAddLocationState } from "../../../../interfaces/index";
 import { Container, Table, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-export default function Locations() {
+export default function AllCoaches() {
     const locationCtx = React.useContext<IAddLocationState>(LocationContext);
     const navigate = useNavigate();
 
@@ -22,16 +22,23 @@ export default function Locations() {
 
     console.log(locationCtx.locations);
 
-    const tableHeaders = ["Name", "Address", "Phone", "Email", "description"];
+    const tableHeaders = [
+        "Coach Name",
+        "Start",
+        "Destination",
+        "Time",
+        "Description",
+        "Bus Id",
+    ];
 
     return (
         <Container>
-            <h1 className="mb-5">Bus Stops</h1>
+            <h1 className="mb-5">Buses</h1>
             <Button
-                onClick={() => navigate("/admin/add-location")}
+                onClick={() => navigate("/admin/add-coach")}
                 className="mb-4"
             >
-                Add Bus Station{" "}
+                Add Coach{" "}
             </Button>{" "}
             <Table striped bordered hover>
                 <thead>
@@ -48,15 +55,18 @@ export default function Locations() {
                             <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>{location.name}</td>
-                                <td>{location.address}</td>
+
                                 <td>{location.phone}</td>
-                                <td>{location.email}</td>
+                                <td>{location.address}</td>
+
                                 <td>{location.description}</td>
+                                <td>hgjhg</td>
+                                <td>{100}</td>
                                 <td>
                                     <Button
                                         onClick={() =>
                                             navigate(
-                                                `/admin/edit-location/${location._id}`
+                                                `/admin/edit-bus/${location._id}`
                                             )
                                         }
                                     >

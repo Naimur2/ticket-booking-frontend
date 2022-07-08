@@ -17,6 +17,11 @@ import AuthRoute from "./pages/secret-routes/AuthRoute";
 import PrivateAdminRoute from "./pages/secret-routes/PrivateAdminRoute";
 import PrivateUserRoute from "./pages/secret-routes/PrivateUserRoute";
 import Home from "./pages/User/Home/Home";
+import UpdateBus from "./pages/Admin/Bus/UpdateBus/UpdateBus";
+import Buses from "./pages/Admin/Bus/Buses/Buses";
+import AddCoaches from "./pages/Admin/Coaches/AddCoaches/AddCoaches";
+import UpdateCoach from "./pages/Admin/Coaches/UpdateCoach/UpdateCoach";
+import AllCoaches from "./pages/Admin/Coaches/AllCoaches/AllCoaches";
 
 export default function App() {
     const authCtx = React.useContext<IAuthContext>(AuthContext);
@@ -68,6 +73,16 @@ export default function App() {
                 <Route path="/admin" element={<PrivateAdminRoute />}>
                     <Route path="/admin/" element={<Main />} />
                     <Route path="/admin/add-bus" element={<AddBus />} />
+                    <Route path="/admin/edit-bus/:id" element={<UpdateBus />} />
+                    <Route path="/admin/buses" element={<Buses />} />
+
+                    <Route path="/admin/add-coach" element={<AddCoaches />} />
+                    <Route
+                        path="/admin/edit-coach/:id"
+                        element={<UpdateCoach />}
+                    />
+                    <Route path="/admin/coaches" element={<AllCoaches />} />
+
                     <Route path="/admin/locations" element={<Locations />} />
                     <Route
                         path="/admin/edit-location/:id"

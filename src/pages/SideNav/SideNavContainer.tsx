@@ -19,8 +19,9 @@ export default function SideNavContainer({
 
     const routes: IRouteProps[] = [
         { path: "/admin", title: "Dashboard", type: "admin" },
-        { path: "/admin/add-bus", title: "Add Bus", type: "admin" },
+        { path: "/admin/buses", title: "Buses", type: "admin" },
         { path: "/admin/locations", title: "Bus Stops", type: "admin" },
+        { path: "/admin/coaches", title: "Coaches", type: "admin" },
     ];
 
     const filteredRoutes = routes.filter((route) => route.type === role);

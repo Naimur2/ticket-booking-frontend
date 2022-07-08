@@ -3,7 +3,7 @@ import { Button, Container, Form } from "react-bootstrap";
 import { LocationContext } from "../../../../context/contexts";
 import { ILocation } from "../../../../interfaces";
 
-export default function AddBus() {
+export default function AddCoaches() {
     const locatiinCtx = React.useContext(LocationContext);
 
     const formRef = React.useRef<HTMLFormElement>(null);

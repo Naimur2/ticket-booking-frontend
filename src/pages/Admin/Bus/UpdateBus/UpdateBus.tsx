@@ -1,10 +1,13 @@
 import React from "react";
-import { Button, Container, Form } from "react-bootstrap";
+import { useParams } from "react-router-dom";
 import { LocationContext } from "../../../../context/contexts";
+import { Button, Container, Form } from "react-bootstrap";
 import { ILocation } from "../../../../interfaces";
 
-export default function AddBus() {
-    const locatiinCtx = React.useContext(LocationContext);
+export default function UpdateBus() {
+    const params = useParams();
+    const { id } = params;
+    const locationCtx = React.useContext(LocationContext);
 
     const formRef = React.useRef<HTMLFormElement>(null);
     const [data, setData] = React.useState<ILocation>({
@@ -15,16 +18,23 @@ export default function AddBus() {
         description: "",
     });
 
+    React.useEffect(() => {
+        (async () => {
+            const loc = await locationCtx?.getLoationById?.(id);
+            setData(loc);
+        })();
+    }, [params]);
+
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        locatiinCtx?.addLocation?.(data);
+        locationCtx?.updateLocation?.(data);
         formRef.current?.reset();
     };
 
     return (
         <Container>
             <div className="auth-form">
-                <h1 className="mb-5 mx-auto">Add Bus</h1>
+                <h1 className="mb-5 mx-auto">Add Bus Stop</h1>
 
                 <Form ref={formRef} onSubmit={handleSubmit}>
                     <Form.Group className="mb-3" controlId="name">
