@@ -30,10 +30,10 @@ export default function App() {
     React.useEffect(() => {
         let clean = true;
 
-        if (authCtx.isAuthenticated && authCtx.user?.role === "admin") {
+        if (authCtx.isAuthenticated && authCtx?.user?.role === "admin") {
             navigate("/admin/");
         }
-        if (authCtx.isAuthenticated && authCtx.user?.role === "user") {
+        if (authCtx.isAuthenticated && authCtx?.user?.role === "user") {
             navigate("/user/");
         }
 
@@ -47,10 +47,10 @@ export default function App() {
     React.useEffect(() => {
         let clean = true;
 
-        authCtx.validateToken();
+        authCtx?.validateToken?.();
 
         return () => {
-            authCtx.clean();
+            authCtx?.clean?.();
             clean = false;
         };
     }, []);

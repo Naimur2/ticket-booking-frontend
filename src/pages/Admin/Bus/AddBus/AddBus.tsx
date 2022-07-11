@@ -28,11 +28,37 @@ export default function AddBus() {
 
                 <Form ref={formRef} onSubmit={handleSubmit}>
                     <Form.Group className="mb-3" controlId="name">
+                        <Form.Label>Bus image</Form.Label>
+                        <Form.Control
+                            value={data.image}
+                            required={true}
+                            type="file"
+                            accept="image/jpeg, image/png"
+                            onChange={(e) =>
+                                setData({ ...data, image: e.target.value })
+                            }
+                        />
+                    </Form.Group>
+                    <Form.Group className="mb-3" controlId="name">
                         <Form.Label>Bus Name</Form.Label>
                         <Form.Control
                             required={true}
                             type="text"
                             placeholder="Enter name"
+                            value={data.name}
+                            onChange={(e) =>
+                                setData({ ...data, name: e.target.value })
+                            }
+                        />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="name">
+                        <Form.Label>Seats</Form.Label>
+                        <Form.Control
+                            required={true}
+                            type="number"
+                            placeholder="Enter number of seats"
+                            min={10}
                             value={data.name}
                             onChange={(e) =>
                                 setData({ ...data, name: e.target.value })

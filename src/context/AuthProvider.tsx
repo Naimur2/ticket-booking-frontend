@@ -10,8 +10,6 @@ interface IData {
     user?: IUser;
 }
 
-const api = import.meta.env.VITE_API_URL;
-
 const defaultState: IAuthContext = {
     isAuthenticated: false,
     isLoading: false,
@@ -120,18 +118,19 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                             headers: { Authorization: `Bearer ${token}` },
                         }
                     );
-                    dispatch({ type: "LOADING", payload: false });
 
                     if (res.status === 200 || res.status === 201) {
-                        console.log(res.data);
                         dispatch({ type: "LOGIN", payload: res?.data?.user });
                     } else {
+                        alert("Validation failed");
                         navigate("/");
                     }
                 } else {
+                    dispatch({ type: "LOADING", payload: false });
                     navigate("/");
                 }
             } catch (error: any) {
+                dispatch({ type: "LOADING", payload: false });
                 navigate("/");
             }
         };
