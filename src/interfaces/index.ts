@@ -40,3 +40,40 @@ export interface IAddLocationState {
     deleteLocation?: (id: string) => Promise<void>;
     clean?: () => void;
 }
+
+export interface IBus {
+    _id?: string;
+    busName: string;
+    busLiscenseNumber: string;
+    busType: "AC" | "Non-AC";
+    busDescription: string;
+    busImage: File | string;
+    seatNumber: string;
+}
+
+export interface ICommon {
+    isLoading: boolean;
+    error: any | null;
+    add?: (bus: IBus) => Promise<void>;
+    clean?: () => void;
+    delete?: (id: string) => Promise<void>;
+    update?: (bus: IBus, id: string) => Promise<void>;
+    get?: () => Promise<void>;
+    getById?: (id: string) => Promise<void>;
+}
+
+export interface IBusContext extends ICommon {
+    buses: IBus[];
+}
+
+export interface IConfig {
+    [key: string]: string;
+}
+
+export interface ICoache {
+    _id?: string;
+    startingPoint: ILocation;
+    destination: ILocation;
+    bus: IBus;
+    startingTime: string;
+}

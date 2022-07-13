@@ -1,81 +1,134 @@
 import React from "react";
-import { useParams } from "react-router-dom";
-import { LocationContext } from "../../../../context/contexts";
 import { Button, Container, Form } from "react-bootstrap";
-import { ILocation } from "../../../../interfaces";
+import { BusContext } from "../../../../context/contexts";
+import { IBus, IBusContext } from "../../../../interfaces/index";
+import { useParams } from "react-router-dom";
 
-export default function UpdateBus() {
+export default function AddBus() {
     const params = useParams();
     const { id } = params;
-    const locationCtx = React.useContext(LocationContext);
 
     const formRef = React.useRef<HTMLFormElement>(null);
-    const [data, setData] = React.useState<ILocation>({
-        name: "",
-        address: "",
-        phone: "",
-        email: "",
-        description: "",
+    const busCtx = React.useContext<IBusContext>(BusContext);
+
+    const [data, setData] = React.useState<IBus>({
+        busName: "",
+        busLiscenseNumber: "",
+        busType: "Non-AC",
+        busDescription: "",
+        busImage: "",
+        seatNumber: "",
     });
+
+    const handleSubmit = (event: React.FormEvent): void => {
+        event.preventDefault();
+        const formData = new FormData();
+        Object.entries(data).forEach(([key, value]) =>
+            formData.append(key, value)
+        );
+        busCtx?.update?.(formData, id);
+    };
 
     React.useEffect(() => {
         (async () => {
-            const loc = await locationCtx?.getLoationById?.(id);
-            setData(loc);
+            const busData = await busCtx?.getById?.(id);
+            setData(busData);
         })();
     }, [params]);
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        locationCtx?.updateLocation?.(data);
-        formRef.current?.reset();
+    console.log(data);
+
+    const handleChange = (event: React.ChangeEvent): void => {
+        const target = event.target as HTMLInputElement;
+        try {
+            if (target.files) {
+                setData({ ...data, busImage: target.files[0] });
+            } else {
+                setData({
+                    ...data,
+                    [target.name]: target.value,
+                });
+            }
+        } catch (error: any) {
+            console.log(error.message);
+        }
     };
 
     return (
         <Container>
             <div className="auth-form">
-                <h1 className="mb-5 mx-auto">Add Bus Stop</h1>
+                <h1 className="mb-5 mx-auto">Edit Bus</h1>
 
                 <Form ref={formRef} onSubmit={handleSubmit}>
                     <Form.Group className="mb-3" controlId="name">
+                        <Form.Label>Bus image</Form.Label>
+                        <Form.Control
+                            name="busImage"
+                            type="file"
+                            accept="image/jpeg, image/png, image/jpg"
+                            onChange={handleChange}
+                        />
+                    </Form.Group>
+                    <Form.Group className="mb-3" controlId="name">
                         <Form.Label>Bus Name</Form.Label>
                         <Form.Control
+                            name="busName"
                             required={true}
                             type="text"
                             placeholder="Enter name"
-                            value={data.name}
-                            onChange={(e) =>
-                                setData({ ...data, name: e.target.value })
-                            }
+                            value={data.busName}
+                            onChange={handleChange}
                         />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="name">
+                        <Form.Label>Seats</Form.Label>
+                        <Form.Control
+                            name="seatNumber"
+                            required={true}
+                            type="number"
+                            placeholder="Enter number of seats"
+                            min={10}
+                            value={data.seatNumber}
+                            onChange={handleChange}
+                        />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="name">
+                        <Form.Label>Select bus types</Form.Label>
+                        <Form.Select
+                            name="busType"
+                            required={true}
+                            aria-label="Select bus type"
+                            value={data.busType}
+                            onChange={handleChange}
+                        >
+                            <option value="Non-AC">Non-AC</option>
+                            <option value="AC">AC</option>
+                        </Form.Select>
                     </Form.Group>
 
                     <Form.Group className="mb-3" controlId="phone">
                         <Form.Label>Liscense Id</Form.Label>
                         <Form.Control
+                            name="busLiscenseNumber"
                             required={true}
                             type="text"
                             placeholder="Liscense Id"
-                            value={data.phone}
-                            onChange={(e) =>
-                                setData({ ...data, phone: e.target.value })
-                            }
+                            value={data.busLiscenseNumber}
+                            onChange={handleChange}
                         />
                     </Form.Group>
 
                     <Form.Group className="mb-3" controlId="description">
                         <Form.Label>Description</Form.Label>
                         <Form.Control
+                            name="busDescription"
                             required={true}
                             type="text"
                             placeholder="Enter description"
-                            value={data.description}
-                            onChange={(e) =>
-                                setData({
-                                    ...data,
-                                    description: e.target.value,
-                                })
-                            }
+                            value={data.busDescription}
+                            onChange={handleChange}
                             as="textarea"
                         />
                     </Form.Group>

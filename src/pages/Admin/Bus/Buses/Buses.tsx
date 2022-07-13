@@ -1,28 +1,35 @@
 import React from "react";
-import { LocationContext } from "../../../../context/contexts";
-import { IAddLocationState } from "../../../../interfaces/index";
-import { Container, Table, Button } from "react-bootstrap";
+import { Button, Container, Table } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { BusContext } from "../../../../context/contexts";
+import { IBusContext } from "../../../../interfaces/index";
 
 export default function Buses() {
-    const locationCtx = React.useContext<IAddLocationState>(LocationContext);
+    const busCtx = React.useContext<IBusContext>(BusContext);
     const navigate = useNavigate();
 
     React.useEffect(() => {
         let clean = false;
         (async () => {
-            await locationCtx?.getAllLocations?.();
+            await busCtx?.get?.();
         })();
 
         return () => {
             clean = true;
-            locationCtx?.clean?.();
+            busCtx?.clean?.();
         };
     }, []);
 
-    console.log(locationCtx.locations);
-
-    const tableHeaders = ["Bus Name", "Liscence Id", "description"];
+    const tableHeaders = [
+        "Bus Name",
+        "Bus Image",
+        "Seats",
+        "Liscence Id",
+        "Bus Type",
+        "Description",
+        "Edit",
+        "Delete",
+    ];
 
     return (
         <Container>
@@ -40,20 +47,30 @@ export default function Buses() {
                     </tr>
                 </thead>
                 <tbody>
-                    {locationCtx?.locations?.map((location, index) => {
+                    {busCtx?.buses?.map((bus, index) => {
                         return (
                             <tr key={index}>
                                 <td>{index + 1}</td>
-                                <td>{location.name}</td>
+                                <td>{bus.busName}</td>
 
-                                <td>{location.phone}</td>
+                                <td>
+                                    <img
+                                        height={50}
+                                        width={50}
+                                        src={bus.busImage}
+                                        alt={bus.busName}
+                                    />
+                                </td>
 
-                                <td>{location.description}</td>
+                                <td>{bus.seatNumber}</td>
+                                <td>{bus.busLiscenseNumber}</td>
+                                <td>{bus.busType}</td>
+                                <td>{bus.busDescription}</td>
                                 <td>
                                     <Button
                                         onClick={() =>
                                             navigate(
-                                                `/admin/edit-bus/${location._id}`
+                                                `/admin/edit-bus/${bus._id}`
                                             )
                                         }
                                     >
@@ -63,9 +80,7 @@ export default function Buses() {
                                 <td>
                                     <Button
                                         onClick={() =>
-                                            locationCtx.deleteLocation(
-                                                location._id
-                                            )
+                                            busCtx?.delete?.(bus._id as string)
                                         }
                                         variant="danger"
                                     >

@@ -1,5 +1,5 @@
 import React from "react";
-import { getAllData } from "../../../helpers/apicalls";
+import { getAllData } from "../../../helpers/api-calls";
 
 export default function Main() {
     React.useEffect(() => {

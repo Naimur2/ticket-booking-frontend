@@ -1,11 +1,16 @@
 import axios, { AxiosResponse } from "axios";
+import { IConfig } from "../interfaces/index";
 
-export const handleAdd = async (data: any, api: string) => {
+export const handleAdd = async (api: string, data: any, config?: IConfig) => {
     try {
         const token = localStorage.getItem("token");
+        const headers: IConfig = {
+            Authorization: `Bearer ${token}`,
+            ...config,
+        };
 
         const response: AxiosResponse<any> = await axios.post(api, data, {
-            headers: { Authorization: `Bearer ${token}` },
+            headers,
         });
 
         if (response.status === 200 || response.status === 201) {
@@ -18,13 +23,26 @@ export const handleAdd = async (data: any, api: string) => {
     }
 };
 
-export const handleDelete = async (id: string, api: string) => {
+export const handleDelete = async (
+    api: string,
+    id: string,
+    config?: object
+) => {
     try {
         const token = localStorage.getItem("token");
+        const headers: IConfig = {
+            Authorization: `Bearer ${token}`,
+            ...config,
+        };
 
-        const response: AxiosResponse<any> = await axios.delete(`${api}${id}`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
+        console.log(headers);
+
+        const response: AxiosResponse<any> = await axios.delete(
+            `${api}/${id}`,
+            {
+                headers,
+            }
+        );
 
         if (response.status === 200 || response.status === 201) {
             return response.data;
@@ -36,12 +54,16 @@ export const handleDelete = async (id: string, api: string) => {
     }
 };
 
-export const getDataById = async (id: string, api: string) => {
+export const getDataById = async (api: string, id: string, config?: object) => {
     try {
         const token = localStorage.getItem("token");
+        const headers: IConfig = {
+            Authorization: `Bearer ${token}`,
+            ...config,
+        };
 
-        const response: AxiosResponse<any> = await axios.get(`${api}${id}`, {
-            headers: { Authorization: `Bearer ${token}` },
+        const response: AxiosResponse<any> = await axios.get(`${api}/${id}`, {
+            headers,
         });
 
         if (response.status === 200 || response.status === 201) {
@@ -54,12 +76,18 @@ export const getDataById = async (id: string, api: string) => {
     }
 };
 
-export const getAllData = async (api: string) => {
+export const getAllData = async (api: string, config?: object) => {
     try {
         const token = localStorage.getItem("token");
+        const headers: IConfig = {
+            Authorization: `Bearer ${token}`,
+            ...config,
+        };
+
+        console.log(headers);
 
         const response: AxiosResponse<any> = await axios.get(api, {
-            headers: { Authorization: `Bearer ${token}` },
+            headers,
         });
 
         if (response.status === 200 || response.status === 201) {
@@ -72,14 +100,25 @@ export const getAllData = async (api: string) => {
     }
 };
 
-export const handleUpdate = async (data: any, api: string) => {
+export const handleUpdate = async (
+    api: string,
+    id: string,
+    data: any,
+    config?: object
+) => {
     try {
         const token = localStorage.getItem("token");
+        const headers: IConfig = {
+            Authorization: `Bearer ${token}`,
+            ...config,
+        };
+
+        console.log(headers);
 
         const response: AxiosResponse<any> = await axios.put(
-            `${api}${data._id}`,
+            `${api}/${id}`,
             data,
-            { headers: { Authorization: `Bearer ${token}` } }
+            { headers }
         );
 
         if (response.status === 200 || response.status === 201) {

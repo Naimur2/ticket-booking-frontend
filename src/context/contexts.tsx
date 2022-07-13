@@ -1,6 +1,6 @@
 import React from "react";
 import { IAuthContext } from "../interfaces";
-import { IAddLocationState } from "../interfaces/index";
+import { IAddLocationState, IBusContext } from "../interfaces/index";
 
 export const AuthContext = React.createContext<IAuthContext>({
     isAuthenticated: false,
@@ -23,4 +23,16 @@ export const LocationContext = React.createContext<IAddLocationState>({
     getLocations: async () => {},
     getLoationById: async () => {},
     locations: [],
+});
+
+export const BusContext = React.createContext<IBusContext>({
+    isLoading: false,
+    error: null,
+    add: async () => {},
+    clean: () => {},
+    delete: async () => {},
+    update: async () => {},
+    get: async () => {},
+    getById: async () => {},
+    buses: [],
 });

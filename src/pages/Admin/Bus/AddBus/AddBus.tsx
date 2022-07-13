@@ -1,24 +1,44 @@
 import React from "react";
 import { Button, Container, Form } from "react-bootstrap";
-import { LocationContext } from "../../../../context/contexts";
-import { ILocation } from "../../../../interfaces";
+import { BusContext } from "../../../../context/contexts";
+import { IBus, IBusContext } from "../../../../interfaces/index";
 
 export default function AddBus() {
-    const locatiinCtx = React.useContext(LocationContext);
-
     const formRef = React.useRef<HTMLFormElement>(null);
-    const [data, setData] = React.useState<ILocation>({
-        name: "",
-        address: "",
-        phone: "",
-        email: "",
-        description: "",
+    const busCtx = React.useContext<IBusContext>(BusContext);
+
+    const [data, setData] = React.useState<IBus>({
+        busName: "",
+        busLiscenseNumber: "",
+        busType: "Non-AC",
+        busDescription: "",
+        busImage: "",
+        seatNumber: "",
     });
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (event: React.FormEvent): void => {
         event.preventDefault();
-        locatiinCtx?.addLocation?.(data);
-        formRef.current?.reset();
+        const formData = new FormData();
+        Object.entries(data).forEach(([key, value]) =>
+            formData.append(key, value)
+        );
+        busCtx?.add?.(formData);
+    };
+
+    const handleChange = (event: React.ChangeEvent): void => {
+        const target = event.target as HTMLInputElement;
+        try {
+            if (target.files) {
+                setData({ ...data, busImage: target.files[0] });
+            } else {
+                setData({
+                    ...data,
+                    [target.name]: target.value,
+                });
+            }
+        } catch (error: any) {
+            console.log(error.message);
+        }
     };
 
     return (
@@ -30,68 +50,73 @@ export default function AddBus() {
                     <Form.Group className="mb-3" controlId="name">
                         <Form.Label>Bus image</Form.Label>
                         <Form.Control
-                            value={data.image}
+                            name="busImage"
                             required={true}
                             type="file"
-                            accept="image/jpeg, image/png"
-                            onChange={(e) =>
-                                setData({ ...data, image: e.target.value })
-                            }
+                            accept="image/jpeg, image/png, image/jpg"
+                            onChange={handleChange}
                         />
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="name">
                         <Form.Label>Bus Name</Form.Label>
                         <Form.Control
+                            name="busName"
                             required={true}
                             type="text"
                             placeholder="Enter name"
-                            value={data.name}
-                            onChange={(e) =>
-                                setData({ ...data, name: e.target.value })
-                            }
+                            value={data.busName}
+                            onChange={handleChange}
                         />
                     </Form.Group>
 
                     <Form.Group className="mb-3" controlId="name">
                         <Form.Label>Seats</Form.Label>
                         <Form.Control
+                            name="seatNumber"
                             required={true}
                             type="number"
                             placeholder="Enter number of seats"
                             min={10}
-                            value={data.name}
-                            onChange={(e) =>
-                                setData({ ...data, name: e.target.value })
-                            }
+                            value={data.seatNumber}
+                            onChange={handleChange}
                         />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="name">
+                        <Form.Label>Select bus types</Form.Label>
+                        <Form.Select
+                            name="busType"
+                            required={true}
+                            aria-label="Select bus type"
+                            value={data.busType}
+                            onChange={handleChange}
+                        >
+                            <option value="Non-AC">Non-AC</option>
+                            <option value="AC">AC</option>
+                        </Form.Select>
                     </Form.Group>
 
                     <Form.Group className="mb-3" controlId="phone">
                         <Form.Label>Liscense Id</Form.Label>
                         <Form.Control
+                            name="busLiscenseNumber"
                             required={true}
                             type="text"
                             placeholder="Liscense Id"
-                            value={data.phone}
-                            onChange={(e) =>
-                                setData({ ...data, phone: e.target.value })
-                            }
+                            value={data.busLiscenseNumber}
+                            onChange={handleChange}
                         />
                     </Form.Group>
 
                     <Form.Group className="mb-3" controlId="description">
                         <Form.Label>Description</Form.Label>
                         <Form.Control
+                            name="busDescription"
                             required={true}
                             type="text"
                             placeholder="Enter description"
-                            value={data.description}
-                            onChange={(e) =>
-                                setData({
-                                    ...data,
-                                    description: e.target.value,
-                                })
-                            }
+                            value={data.busDescription}
+                            onChange={handleChange}
                             as="textarea"
                         />
                     </Form.Group>
