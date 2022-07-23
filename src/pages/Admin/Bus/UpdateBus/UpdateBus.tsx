@@ -36,8 +36,6 @@ export default function AddBus() {
         })();
     }, [params]);
 
-    console.log(data);
-
     const handleChange = (event: React.ChangeEvent): void => {
         const target = event.target as HTMLInputElement;
         try {

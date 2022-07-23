@@ -6,7 +6,6 @@ export default function Main() {
         (async () => {
             try {
                 const response = await getAllData("/api/locations/");
-                console.log(response);
             } catch (error) {
                 console.log(error);
             }

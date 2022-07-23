@@ -1,6 +1,10 @@
 import React from "react";
 import { IAuthContext } from "../interfaces";
-import { IAddLocationState, IBusContext } from "../interfaces/index";
+import {
+    IAddLocationState,
+    IBusContext,
+    ICoachContext,
+} from "../interfaces/index";
 
 export const AuthContext = React.createContext<IAuthContext>({
     isAuthenticated: false,
@@ -35,4 +39,17 @@ export const BusContext = React.createContext<IBusContext>({
     get: async () => {},
     getById: async () => {},
     buses: [],
+});
+
+export const CoachContext = React.createContext<ICoachContext>({
+    isLoading: false,
+    error: null,
+    add: async () => {},
+    clean: () => {},
+    delete: async () => {},
+    update: async () => {},
+    get: async () => {},
+    getById: async () => {},
+    search: async () => {},
+    coaches: [],
 });

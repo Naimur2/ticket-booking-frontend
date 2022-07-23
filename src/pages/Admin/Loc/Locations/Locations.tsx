@@ -20,8 +20,6 @@ export default function Locations() {
         };
     }, []);
 
-    console.log(locationCtx.locations);
-
     const tableHeaders = ["Name", "Address", "Phone", "Email", "description"];
 
     return (

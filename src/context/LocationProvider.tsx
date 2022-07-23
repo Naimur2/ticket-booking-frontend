@@ -91,6 +91,7 @@ export default function LocationProvider({
                 }
                 dispatch({ type: "LOADING", payload: false });
             } catch (error: any) {
+                alert("Error adding location");
                 dispatch({ type: "ERROR", payload: error.message });
             }
         };
@@ -105,7 +106,6 @@ export default function LocationProvider({
                 );
 
                 if (response.status === 200 || response.status === 201) {
-                    console.log(response);
                     dispatch({
                         type: "DELETE_LOCATION",
                         payload: id,
@@ -115,6 +115,7 @@ export default function LocationProvider({
                     alert("Error deleting location");
                 }
             } catch (error) {
+                alert(error.message);
                 dispatch({ type: "ERROR", payload: error.message });
             }
         };

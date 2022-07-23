@@ -5,56 +5,58 @@ import {
     handleDelete,
     handleUpdate,
 } from "../helpers/api-calls";
-import { IBusContext } from "../interfaces";
-import { BusContext } from "./contexts";
 
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
-import { IConfig } from "../interfaces/index";
+import { ICoachContext, IConfig } from "../interfaces/index";
+import { CoachContext } from "./contexts";
+import { searchData } from "../helpers/api-calls";
 
-const defaultState: IBusContext = {
+const defaultState: ICoachContext = {
     isLoading: false,
     error: null,
-    buses: [],
+    coaches: [],
 };
 
-const reducer = (state: IBusContext, action: any) => {
+const reducer = (state: ICoachContext, action: any) => {
     switch (action.type) {
-        case "ADD_BUS":
+        case "ADD_DATA":
             return {
                 ...state,
                 isLoading: false,
-                buses: [...state.buses, action.payload],
+                coaches: [...state.coaches, action.payload],
             };
-        case "DELETE_BUS":
+        case "DELETE_DATA":
             return {
                 ...state,
                 isLoading: false,
-                buses: state.buses.filter((bus) => bus._id !== action.payload),
+                coaches: state.coaches.filter(
+                    (coach) => coach._id !== action.payload
+                ),
             };
-        case "UPDATE_BUS":
+        case "UPDATE_DATA":
             return {
                 ...state,
                 isLoading: false,
-                buses: state.buses.map((bus) => {
-                    if (bus._id === action.payload._id) {
+                coaches: state.coaches.map((coach) => {
+                    if (coach._id === action.payload._id) {
                         return action.payload;
                     }
-                    return bus;
+                    return coach;
                 }),
             };
-        case "GET_BUS":
+        case "GET_DATA":
             return {
                 ...state,
                 isLoading: false,
-                buses: action.payload,
+                coaches: action.payload,
             };
         case "CLEAN":
             return {
                 ...state,
                 isLoading: false,
                 error: null,
-                buses: [],
+                coaches: [],
             };
         case "SET_LOADING":
             return {
@@ -72,7 +74,7 @@ const reducer = (state: IBusContext, action: any) => {
     }
 };
 
-export default function BusProvider({
+export default function CoachProvider({
     children,
 }: {
     children: React.ReactNode;
@@ -80,15 +82,44 @@ export default function BusProvider({
     const [state, dispatch] = React.useReducer(reducer, defaultState);
     const navigate = useNavigate();
 
+    const API = "/api/coaches";
+
     const values = React.useMemo(() => {
-        const addBus = async (bus: FormData) => {
+        const addData = async (coach: FormData) => {
+            try {
+                const config: IConfig = {};
+
+                const result = await handleAdd(API, coach, config);
+                dispatch({ type: "ADD_DATA", payload: result.data });
+                alert(result.message);
+
+                navigate(-1);
+            } catch (error: any) {
+                alert("Error adding data");
+                dispatch({ type: "ERROR", payload: error.message });
+            }
+        };
+
+        const deleteData = async (_id: string) => {
+            try {
+                const result = await handleDelete(API, _id);
+                dispatch({ type: "DELETE_DATA", payload: _id });
+                alert(result.message);
+            } catch (error: any) {
+                dispatch({ type: "ERROR", payload: error.message });
+            }
+        };
+
+        const updateData = async (bus: FormData, id: string) => {
             try {
                 const config: IConfig = {
                     "Content-Type": "multipart/form-data",
                 };
 
-                const result = await handleAdd("/api/bus", bus, config);
-                dispatch({ type: "ADD_BUS", payload: result.data });
+                const result = await handleUpdate(API, id, bus, config);
+
+                dispatch({ type: "UPDATE_DATA", payload: result.data });
+
                 alert(result.message);
 
                 navigate(-1);
@@ -97,67 +128,50 @@ export default function BusProvider({
             }
         };
 
-        const deleteBus = async (_id: string) => {
+        const getData = async () => {
             try {
-                const result = await handleDelete("/api/bus", _id);
-                dispatch({ type: "DELETE_BUS", payload: _id });
-                alert(result.message);
-            } catch (error) {
+                const result = await getAllData(API);
+                dispatch({ type: "GET_DATA", payload: result.data });
+            } catch (error: any) {
                 dispatch({ type: "ERROR", payload: error.message });
             }
         };
 
-        const updateBus = async (bus: FormData, id: string) => {
+        const getIDataById = async (_id: string) => {
             try {
-                const config: IConfig = {
-                    "Content-Type": "multipart/form-data",
-                };
-
-                const result = await handleUpdate("/api/bus", id, bus, config);
-
-                dispatch({ type: "UPDATE_BUS", payload: result.data });
-
-                alert(result.message);
-
-                navigate(-1);
-            } catch (error) {
-                dispatch({ type: "ERROR", payload: error.message });
-            }
-        };
-
-        const getBus = async () => {
-            try {
-                const result = await getAllData("/api/bus");
-
-                dispatch({ type: "GET_BUS", payload: result.data });
-            } catch (error) {
-                dispatch({ type: "ERROR", payload: error.message });
-            }
-        };
-
-        const getBusById = async (_id: string) => {
-            try {
-                const result = await getDataById("/api/bus", _id);
+                const result = await getDataById(API, _id);
                 return result.data;
-            } catch (error) {
+            } catch (error: any) {
                 dispatch({ type: "ERROR", payload: error.message });
             }
         };
 
-        const rtData: IBusContext = {
+        const search = async (params: any) => {
+            try {
+                const result = await searchData(API + "/search", params);
+                return result.data;
+            } catch (error: any) {
+                dispatch({ type: "ERROR", payload: error.message });
+            }
+        };
+
+        const rtData: ICoachContext = {
             isLoading: state.isLoading,
             error: state.error,
-            buses: state.buses,
-            add: addBus,
-            delete: deleteBus,
-            update: updateBus,
-            get: getBus,
-            getById: getBusById,
+            coaches: state.coaches,
+            add: addData,
+            delete: deleteData,
+            update: updateData,
+            get: getData,
+            getById: getIDataById,
             clean: () => dispatch({ type: "CLEAN" }),
+            search,
         };
 
         return rtData;
     }, [state]);
 
-    return <BusContext.Provider value={values}>{children}</BusContext.Provider>;
+    return (
+        <CoachContext.Provider value={values}>{children}</CoachContext.Provider>
+    );
 }

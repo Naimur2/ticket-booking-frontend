@@ -7,6 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 import AuthProvider from "./context/AuthProvider";
 import LocationProvider from "./context/LocationProvider";
 import BusProvider from "./context/BusProvider";
+import CoachProvider from "./context/CoachProvider";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
     // <React.StrictMode>
@@ -14,7 +15,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <AuthProvider>
             <LocationProvider>
                 <BusProvider>
-                    <App />
+                    <CoachProvider>
+                        <App />
+                    </CoachProvider>
                 </BusProvider>
             </LocationProvider>
         </AuthProvider>

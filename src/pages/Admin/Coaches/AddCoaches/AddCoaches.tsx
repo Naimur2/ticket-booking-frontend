@@ -1,93 +1,113 @@
 import React from "react";
 import { Button, Container, Form } from "react-bootstrap";
-import { LocationContext, BusContext } from "../../../../context/contexts";
-import { ILocation, IBus } from "../../../../interfaces";
-
-interface ICoachProps {
-    buses: IBus[];
-    locations: ILocation[];
-}
+import {
+    BusContext,
+    CoachContext,
+    LocationContext,
+} from "../../../../context/contexts";
+import { ICoach } from "../../../../interfaces/index";
 
 export default function AddCoaches() {
     const locatiinCtx = React.useContext(LocationContext);
     const busCtx = React.useContext(BusContext);
-
-    const [initialData, setInitialData] = React.useState<ICoachProps>({
-        buses: [],
-        locations: [],
-    });
+    const coachCtx = React.useContext(CoachContext);
+    const [error, setError] = React.useState<string | null>();
 
     React.useEffect(() => {
         (async () => {
-            await busCtx?.get();
-            await locatiinCtx?.getAllLocations();
+            await busCtx?.get?.();
+            await locatiinCtx?.getAllLocations?.();
         })();
     }, []);
 
     const formRef = React.useRef<HTMLFormElement>(null);
-    const [data, setData] = React.useState<ILocation>({
-        name: "",
-        address: "",
-        phone: "",
-        email: "",
-        description: "",
+    const [data, setData] = React.useState<ICoach>({
+        bus: "",
+        startingPoint: "",
+        destination: "",
+        startingTime: "",
+        price: 0,
+        date: "",
     });
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (event: React.FormEvent): void => {
         event.preventDefault();
-        locatiinCtx?.addLocation?.(data);
-        formRef.current?.reset();
+
+        if (data.startingPoint === data.destination) {
+            alert("Starting point and destination can't be same");
+            return;
+        }
+
+        if (
+            data.bus === "" ||
+            data.startingPoint === "" ||
+            data.destination === "" ||
+            data.startingTime === "" ||
+            data.price === 0 ||
+            data.date === ""
+        ) {
+            alert("Please check all the fields");
+            return;
+        }
+        coachCtx?.add?.(data);
     };
 
     const handleChange = (event: React.ChangeEvent): void => {
         const target = event.target as HTMLInputElement;
         try {
-            if (target.files) {
-                setData({ ...data, busImage: target.files[0] });
-            } else {
-                setData({
-                    ...data,
-                    [target.name]: target.value,
-                });
-            }
+            setData({
+                ...data,
+                [target.name]: target.value,
+            });
         } catch (error: any) {
             console.log(error.message);
         }
     };
 
+    const filtereStartingPoints = locatiinCtx?.locations?.filter(
+        (location) => location._id !== data.destination
+    );
+
+    const filtereDestinations = locatiinCtx?.locations?.filter(
+        (location) => location._id !== data.startingPoint
+    );
+
     return (
         <Container>
             <div className="auth-form">
-                <h1 className="mb-5 mx-auto">Add Bus</h1>
+                <h1 className="mb-5 mx-auto">Add Coaches</h1>
 
                 <Form ref={formRef} onSubmit={handleSubmit}>
-                    <Form.Group className="mb-3" controlId="name">
+                    <Form.Group className="mb-3" controlId="start">
                         <Form.Label>Select starting bus stop</Form.Label>
                         <Form.Select
-                            name="busType"
+                            name="startingPoint"
                             required={true}
-                            aria-label="Select bus type"
-                            value={data.busType}
+                            aria-label="Select starting bus stop"
+                            value={data.startingPoint}
                             onChange={handleChange}
                         >
-                            {locatiinCtx?.locations.map((location) => (
+                            <option value="">Select starting bus stop</option>
+                            {filtereStartingPoints?.map((location) => (
                                 <option key={location._id} value={location._id}>
                                     {location.name}
                                 </option>
                             ))}
                         </Form.Select>
                     </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="name">
+                    <Form.Group className="mb-3" controlId="end">
                         <Form.Label>Select Destination bus stop</Form.Label>
                         <Form.Select
-                            name="busType"
+                            name="destination"
                             required={true}
-                            aria-label="Select bus type"
-                            value={data.busType}
+                            aria-label="Select Destination bus stop"
+                            value={data.destination}
                             onChange={handleChange}
                         >
-                            {locatiinCtx?.locations.map((location) => (
+                            <option value={""}>
+                                Select Destination bus stop
+                            </option>
+                            {filtereDestinations?.map((location) => (
                                 <option key={location._id} value={location._id}>
                                     {location.name}
                                 </option>
@@ -95,15 +115,16 @@ export default function AddCoaches() {
                         </Form.Select>
                     </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="name">
+                    <Form.Group className="mb-3" controlId="bus">
                         <Form.Label>Select bus</Form.Label>
                         <Form.Select
-                            name="busType"
+                            name="bus"
                             required={true}
                             aria-label="Select bus type"
-                            value={data.busType}
+                            value={data.bus}
                             onChange={handleChange}
                         >
+                            <option value="">Select bus type</option>
                             {busCtx?.buses.map((bus) => (
                                 <option key={bus._id} value={bus._id}>
                                     {bus.busName}
@@ -112,46 +133,38 @@ export default function AddCoaches() {
                         </Form.Select>
                     </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="name">
-                        <Form.Label>Bus Name</Form.Label>
+                    <Form.Group className="mb-3" controlId="price">
+                        <Form.Label>Price</Form.Label>
                         <Form.Control
                             required={true}
-                            type="text"
-                            placeholder="Enter name"
-                            value={data.name}
-                            onChange={(e) =>
-                                setData({ ...data, name: e.target.value })
-                            }
+                            type="number"
+                            placeholder="Enter fair per seat"
+                            value={data.price}
+                            name="price"
+                            onChange={handleChange}
                         />
                     </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="phone">
-                        <Form.Label>Liscense Id</Form.Label>
+                    <Form.Group className="mb-3" controlId="time">
+                        <Form.Label>Starting Time</Form.Label>
                         <Form.Control
                             required={true}
-                            type="text"
-                            placeholder="Liscense Id"
-                            value={data.phone}
-                            onChange={(e) =>
-                                setData({ ...data, phone: e.target.value })
-                            }
+                            type="time"
+                            placeholder="Enter price per seat"
+                            value={data.startingTime}
+                            name="startingTime"
+                            onChange={handleChange}
                         />
                     </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="description">
-                        <Form.Label>Description</Form.Label>
+                    <Form.Group className="mb-3" controlId="date">
+                        <Form.Label>Date</Form.Label>
                         <Form.Control
                             required={true}
-                            type="text"
-                            placeholder="Enter description"
-                            value={data.description}
-                            onChange={(e) =>
-                                setData({
-                                    ...data,
-                                    description: e.target.value,
-                                })
-                            }
-                            as="textarea"
+                            type="date"
+                            placeholder="Enter price per seat"
+                            value={data?.date}
+                            name="date"
+                            onChange={handleChange}
                         />
                     </Form.Group>
 

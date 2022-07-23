@@ -1,34 +1,35 @@
 import React from "react";
-import { LocationContext } from "../../../../context/contexts";
-import { IAddLocationState } from "../../../../interfaces/index";
-import { Container, Table, Button } from "react-bootstrap";
+import { Button, Container, Table } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { CoachContext } from "../../../../context/contexts";
+import { getFullDay } from "../../../../helpers";
+import { ICoachContext } from "../../../../interfaces/index";
 
 export default function AllCoaches() {
-    const locationCtx = React.useContext<IAddLocationState>(LocationContext);
+    const coachCtx = React.useContext<ICoachContext>(CoachContext);
     const navigate = useNavigate();
 
     React.useEffect(() => {
         let clean = false;
         (async () => {
-            await locationCtx?.getAllLocations?.();
+            await coachCtx?.get?.();
         })();
 
         return () => {
             clean = true;
-            locationCtx?.clean?.();
+            coachCtx?.clean?.();
         };
     }, []);
 
-    console.log(locationCtx.locations);
-
     const tableHeaders = [
-        "Coach Name",
         "Start",
         "Destination",
         "Time",
-        "Description",
-        "Bus Id",
+        "Date",
+        "Bus",
+        "Fair",
+        "",
+        "",
     ];
 
     return (
@@ -50,23 +51,23 @@ export default function AllCoaches() {
                     </tr>
                 </thead>
                 <tbody>
-                    {locationCtx?.locations?.map((location, index) => {
+                    {coachCtx?.coaches?.map((coach, index) => {
                         return (
                             <tr key={index}>
                                 <td>{index + 1}</td>
-                                <td>{location.name}</td>
+                                <td>{coach?.startingPoint?.name}</td>
 
-                                <td>{location.phone}</td>
-                                <td>{location.address}</td>
+                                <td>{coach?.destination?.name}</td>
+                                <td>{coach?.startingTime}</td>
 
-                                <td>{location.description}</td>
-                                <td>hgjhg</td>
-                                <td>{100}</td>
+                                <td>{getFullDay(coach?.date)}</td>
+                                <td>{coach?.bus?.busName}</td>
+                                <td>{coach?.price}</td>
                                 <td>
                                     <Button
                                         onClick={() =>
                                             navigate(
-                                                `/admin/edit-bus/${location._id}`
+                                                `/admin/edit-coach/${coach?._id}`
                                             )
                                         }
                                     >
@@ -76,9 +77,7 @@ export default function AllCoaches() {
                                 <td>
                                     <Button
                                         onClick={() =>
-                                            locationCtx.deleteLocation(
-                                                location._id
-                                            )
+                                            coachCtx.delete(coach._id)
                                         }
                                         variant="danger"
                                     >

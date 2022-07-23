@@ -51,26 +51,26 @@ export default function Buses() {
                         return (
                             <tr key={index}>
                                 <td>{index + 1}</td>
-                                <td>{bus.busName}</td>
+                                <td>{bus?.busName}</td>
 
                                 <td>
                                     <img
                                         height={50}
                                         width={50}
-                                        src={bus.busImage}
-                                        alt={bus.busName}
+                                        src={bus?.busImage}
+                                        alt={bus?.busName}
                                     />
                                 </td>
 
-                                <td>{bus.seatNumber}</td>
-                                <td>{bus.busLiscenseNumber}</td>
-                                <td>{bus.busType}</td>
-                                <td>{bus.busDescription}</td>
+                                <td>{bus?.seatNumber}</td>
+                                <td>{bus?.busLiscenseNumber}</td>
+                                <td>{bus?.busType}</td>
+                                <td>{bus?.busDescription}</td>
                                 <td>
                                     <Button
                                         onClick={() =>
                                             navigate(
-                                                `/admin/edit-bus/${bus._id}`
+                                                `/admin/edit-bus/${bus?._id}`
                                             )
                                         }
                                     >
@@ -80,7 +80,7 @@ export default function Buses() {
                                 <td>
                                     <Button
                                         onClick={() =>
-                                            busCtx?.delete?.(bus._id as string)
+                                            busCtx?.delete?.(bus?._id as string)
                                         }
                                         variant="danger"
                                     >

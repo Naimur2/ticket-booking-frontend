@@ -16,7 +16,10 @@ const defaultState: IAuthContext = {
     user: null,
 };
 
-const reducer = (state: IAuthContext, action: any) => {
+const reducer = (
+    state: IAuthContext,
+    action: { type: string; payload: any }
+) => {
     switch (action.type) {
         case "LOGIN":
             return {
@@ -72,6 +75,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 }
             } catch (error: any) {
                 console.log(error);
+                dispatch({ type: "LOADING", payload: false });
                 alert("Authentication failed");
             }
         };
@@ -83,7 +87,6 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         };
 
         const registerHandler = async (user: IUser) => {
-            console.log("register", user);
             try {
                 dispatch({ type: "LOADING", payload: true });
                 const res: AxiosResponse<IData> = await axios.post(

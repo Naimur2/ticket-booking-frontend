@@ -22,6 +22,7 @@ import Buses from "./pages/Admin/Bus/Buses/Buses";
 import AddCoaches from "./pages/Admin/Coaches/AddCoaches/AddCoaches";
 import UpdateCoach from "./pages/Admin/Coaches/UpdateCoach/UpdateCoach";
 import AllCoaches from "./pages/Admin/Coaches/AllCoaches/AllCoaches";
+import CoachDetails from "./pages/public/CoachDetails/CoachDetails";
 
 export default function App() {
     const authCtx = React.useContext<IAuthContext>(AuthContext);
@@ -64,6 +65,7 @@ export default function App() {
             <NavBar />
             <Routes>
                 <Route path="/" element={<Public />} />
+                <Route path="/coach-details" element={<CoachDetails />} />
 
                 <Route path="/" element={<AuthRoute />}>
                     <Route path="/login" element={<Login />} />

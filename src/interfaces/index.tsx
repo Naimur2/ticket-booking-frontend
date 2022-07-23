@@ -60,6 +60,7 @@ export interface ICommon {
     update?: (bus: IBus, id: string) => Promise<void>;
     get?: () => Promise<void>;
     getById?: (id: string) => Promise<void>;
+    search?: (search: any) => Promise<void>;
 }
 
 export interface IBusContext extends ICommon {
@@ -70,10 +71,16 @@ export interface IConfig {
     [key: string]: string;
 }
 
-export interface ICoache {
+export interface ICoach {
     _id?: string;
-    startingPoint: ILocation;
-    destination: ILocation;
-    bus: IBus;
-    startingTime: string;
+    startingPoint: ILocation | string;
+    destination: ILocation | string;
+    bus?: IBus | string;
+    startingTime?: string;
+    price?: number;
+    date?: Date | string;
+}
+
+export interface ICoachContext extends ICommon {
+    coaches: ICoach[];
 }

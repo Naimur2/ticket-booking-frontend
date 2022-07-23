@@ -35,8 +35,6 @@ export const handleDelete = async (
             ...config,
         };
 
-        console.log(headers);
-
         const response: AxiosResponse<any> = await axios.delete(
             `${api}/${id}`,
             {
@@ -84,8 +82,6 @@ export const getAllData = async (api: string, config?: object) => {
             ...config,
         };
 
-        console.log(headers);
-
         const response: AxiosResponse<any> = await axios.get(api, {
             headers,
         });
@@ -113,8 +109,6 @@ export const handleUpdate = async (
             ...config,
         };
 
-        console.log(headers);
-
         const response: AxiosResponse<any> = await axios.put(
             `${api}/${id}`,
             data,
@@ -125,6 +119,27 @@ export const handleUpdate = async (
             return response.data;
         } else {
             throw new Error({ message: "Error updating data" } as any);
+        }
+    } catch (error: any) {
+        throw new Error({ message: error.message } as any);
+    }
+};
+
+export const searchData = async (api: string, data) => {
+    try {
+        const token = localStorage.getItem("token");
+        const headers: IConfig = {
+            Authorization: `Bearer ${token}`,
+        };
+
+        const response: AxiosResponse<any> = await axios.post(api, data, {
+            headers,
+        });
+
+        if (response.status === 200 || response.status === 201) {
+            return response.data;
+        } else {
+            throw new Error({ message: "Error getting data" } as any);
         }
     } catch (error: any) {
         throw new Error({ message: error.message } as any);
