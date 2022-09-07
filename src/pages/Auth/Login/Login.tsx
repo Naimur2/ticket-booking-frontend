@@ -3,6 +3,7 @@ import { Form, Button, Container } from "react-bootstrap";
 import { AuthContext } from "../../../context/contexts";
 import { IAuthContext } from "../../../interfaces";
 import "./Login.scss";
+import { useSearchParams } from "react-router-dom";
 
 interface ILoginProps {
     email: string;
@@ -17,16 +18,22 @@ export default function Login() {
         password: "",
     });
 
+    const [searchParams] = useSearchParams();
+
+    let id = "";
+    id = searchParams.get("coachId");
+
     const [isPasswordShown, setIsPasswordShown] = React.useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        authCtx.login(data.email, data.password);
+        authCtx?.login?.(data.email, data.password, id);
     };
 
     return (
         <Container>
             <div className="auth-form">
+                <h1 className="my-4">Login</h1>
                 <Form onSubmit={handleSubmit}>
                     <Form.Group className="mb-3" controlId="email">
                         <Form.Label>Email address</Form.Label>
@@ -61,8 +68,8 @@ export default function Login() {
                             label="Show Password"
                         />
                     </Form.Group>
-                    <Button variant="primary" type="submit">
-                        Submit
+                    <Button className="my-4" variant="primary" type="submit">
+                        Login
                     </Button>
                 </Form>
             </div>

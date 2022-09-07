@@ -14,7 +14,9 @@ export const AuthContext = React.createContext<IAuthContext>({
     register: async () => {},
     isLoading: false,
     validateToken: async () => {},
+    getUser: async () => {},
     clean: () => {},
+    updateUser: async () => {},
 });
 
 export const LocationContext = React.createContext<IAddLocationState>({
@@ -51,5 +53,8 @@ export const CoachContext = React.createContext<ICoachContext>({
     get: async () => {},
     getById: async () => {},
     search: async () => {},
+    bookCoach: async () => {},
+    getUserTickets: async () => {},
+    cancelTicket: async () => {},
     coaches: [],
 });

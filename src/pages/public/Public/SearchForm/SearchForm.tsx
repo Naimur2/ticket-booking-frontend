@@ -6,6 +6,7 @@ import {
     LocationContext,
 } from "../../../../context/contexts";
 import { ICoach } from "../../../../interfaces/index";
+import { isDateExpired } from "../../../../helpers/index";
 
 interface IProps {
     setSearchResult: (data: ICoach[]) => void;
@@ -52,7 +53,14 @@ export default function SearchForm(props: IProps) {
             destination: data.destination,
             date: data.date,
         });
-        props.setSearchResult(result);
+
+        const filteredResult = result?.filter((item) => {
+            if (!isDateExpired(item.startingTime, item.date)) {
+                return item;
+            }
+        });
+
+        props.setSearchResult(filteredResult);
     };
 
     const handleChange = (event: React.ChangeEvent): void => {
@@ -77,7 +85,7 @@ export default function SearchForm(props: IProps) {
 
     return (
         <Container>
-            <div className="auth-form">
+            <div className="auth-form ">
                 <h1 className="mb-5 mx-auto">Search Coaches</h1>
 
                 <Form

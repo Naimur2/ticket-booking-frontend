@@ -1,8 +1,9 @@
 import React from "react";
 import { Button, Table } from "react-bootstrap";
 import { getFullDay } from "../../../../helpers";
-import { ICoach } from "../../../../interfaces/index";
+import { IAuthContext, ICoach } from "../../../../interfaces/index";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../../../context/contexts";
 
 export default function Coaches({
     searchResults,
@@ -10,6 +11,9 @@ export default function Coaches({
     searchResults: ICoach[];
 }) {
     const navigate = useNavigate();
+    const authCtx = React.useContext<IAuthContext>(AuthContext);
+
+    const role = authCtx.user?.role;
 
     const tableHeaders = [
         "Start",
@@ -48,7 +52,9 @@ export default function Coaches({
                                 <Button
                                     onClick={() =>
                                         navigate(
-                                            "/coach-details?id=" + coach._id
+                                            role === "user"
+                                                ? `/user/coach-details?id=${coach._id}`
+                                                : `/coach-details?id=${coach._id}`
                                         )
                                     }
                                 >

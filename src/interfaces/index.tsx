@@ -1,4 +1,5 @@
 export interface IUser {
+    _id?: string;
     firstName: string;
     lastName: string;
     email: string;
@@ -6,15 +7,22 @@ export interface IUser {
     confirmPassword?: string;
     termsAccepted?: boolean;
     role?: string;
+    phone?: string;
 }
 
 export interface IAuthContext {
     isAuthenticated: boolean;
     user: IUser | null;
-    login?: (email: string, password: string) => Promise<void>;
+    login?: (
+        email: string,
+        password: string,
+        coachId?: string
+    ) => Promise<void>;
     logout?: () => void;
     validateToken?: () => Promise<void>;
     register?: (user: IUser) => Promise<void>;
+    getUser?: (email: string) => Promise<void>;
+    updateUser?: (user: IUser) => Promise<void>;
     isLoading: boolean;
     clean?: () => void;
 }
@@ -70,6 +78,12 @@ export interface IBusContext extends ICommon {
 export interface IConfig {
     [key: string]: string;
 }
+export interface ISeat {
+    _id?: string;
+    seatNumber: string | number;
+    seatStatus: boolean;
+    user?: string;
+}
 
 export interface ICoach {
     _id?: string;
@@ -79,8 +93,27 @@ export interface ICoach {
     startingTime?: string;
     price?: number;
     date?: Date | string;
+    seats?: ISeat[];
+    maximumSeats?: number;
 }
 
 export interface ICoachContext extends ICommon {
     coaches: ICoach[];
+    bookCoach?: (
+        coacId: string,
+        seats: ISeat[],
+        userId: string
+    ) => Promise<void>;
+    getUserTickets?: (userId: string) => Promise<void>;
+    cancelTicket?: (
+        id: string,
+        seats: string[],
+        userId: string
+    ) => Promise<void>;
+}
+
+export interface IData {
+    message: string;
+    access_token?: string;
+    user?: IUser;
 }

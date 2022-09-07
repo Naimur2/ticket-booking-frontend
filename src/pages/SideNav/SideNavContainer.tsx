@@ -22,6 +22,10 @@ export default function SideNavContainer({
         { path: "/admin/buses", title: "Buses", type: "admin" },
         { path: "/admin/locations", title: "Bus Stops", type: "admin" },
         { path: "/admin/coaches", title: "Coaches", type: "admin" },
+        { path: "/user/", title: "Book Ticket", type: "user" },
+        { path: "/user/my-tickets", title: "My Tickets", type: "user" },
+        { path: "/user/editprofile", title: "Edit profile", type: "user" },
+        { path: "/admin/editprofile", title: "Edit profile", type: "admin" },
     ];
 
     const filteredRoutes = routes.filter((route) => route.type === role);

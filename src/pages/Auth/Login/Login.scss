@@ -2,7 +2,9 @@
 
 .auth-form {
     width: 100%;
-    padding-top: 5rem;
+
+    border: 1px solid #ccc;
+    padding: 1rem;
 
     @include breakpoint(xs) {
         width: 100%;

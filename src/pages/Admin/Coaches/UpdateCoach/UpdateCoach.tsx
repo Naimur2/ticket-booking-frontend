@@ -23,6 +23,7 @@ export default function UpdateCoach() {
         startingTime: "",
         price: 0,
         date: "",
+        maximumSeats: 0,
     });
 
     const handleSubmit = (event: React.FormEvent): void => {
@@ -44,7 +45,7 @@ export default function UpdateCoach() {
             alert("Please check all the fields");
             return;
         }
-        coachCtx?.update?.(data);
+        coachCtx?.update?.(data, params.id);
     };
 
     const handleChange = (event: React.ChangeEvent): void => {
@@ -68,14 +69,15 @@ export default function UpdateCoach() {
 
     React.useEffect(() => {
         (async () => {
-            const fetchedData = await coachCtx?.getById?.(params.id);
+            const fetchedData = await coachCtx?.getById?.(params?.id);
             const coachData = {
-                bus: fetchedData?.bus,
+                bus: fetchedData?.bus?._id,
                 startingPoint: fetchedData?.startingPoint._id,
                 destination: fetchedData?.destination._id,
                 startingTime: fetchedData?.startingTime,
                 price: fetchedData?.price,
                 date: new Date(fetchedData?.date).toISOString().split("T")[0],
+                maximumSeats: fetchedData?.maximumSeats,
             };
             setData(coachData);
         })();
@@ -92,7 +94,7 @@ export default function UpdateCoach() {
     return (
         <Container>
             <div className="auth-form">
-                <h1 className="mb-5 mx-auto">Add Coaches</h1>
+                <h1 className="mb-5 mx-auto">Edit Coaches</h1>
 
                 <Form ref={formRef} onSubmit={handleSubmit}>
                     <Form.Group className="mb-3" controlId="start">
@@ -101,7 +103,7 @@ export default function UpdateCoach() {
                             name="startingPoint"
                             required={true}
                             aria-label="Select starting bus stop"
-                            value={data.startingPoint}
+                            value={data?.startingPoint}
                             onChange={handleChange}
                         >
                             <option value="">Select starting bus stop</option>
@@ -118,7 +120,7 @@ export default function UpdateCoach() {
                             name="destination"
                             required={true}
                             aria-label="Select Destination bus stop"
-                            value={data.destination}
+                            value={data?.destination}
                             onChange={handleChange}
                         >
                             <option value={""}>
@@ -138,7 +140,7 @@ export default function UpdateCoach() {
                             name="bus"
                             required={true}
                             aria-label="Select bus type"
-                            value={data.bus}
+                            value={data?.bus}
                             onChange={handleChange}
                         >
                             <option value="">Select bus type</option>
@@ -158,6 +160,20 @@ export default function UpdateCoach() {
                             placeholder="Enter fair per seat"
                             value={data.price}
                             name="price"
+                            onChange={handleChange}
+                        />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="price">
+                        <Form.Label>
+                            Maximum number of seats per person
+                        </Form.Label>
+                        <Form.Control
+                            required={true}
+                            type="number"
+                            placeholder="Enter maximum per person"
+                            value={data?.maximumSeats}
+                            name="maximumSeats"
                             onChange={handleChange}
                         />
                     </Form.Group>

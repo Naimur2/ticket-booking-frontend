@@ -28,13 +28,14 @@ export default function AllCoaches() {
         "Date",
         "Bus",
         "Fair",
+        "MSPP",
         "",
         "",
     ];
 
     return (
         <Container>
-            <h1 className="mb-5">Buses</h1>
+            <h1 className="mb-5">All Coaches</h1>
             <Button
                 onClick={() => navigate("/admin/add-coach")}
                 className="mb-4"
@@ -63,6 +64,7 @@ export default function AllCoaches() {
                                 <td>{getFullDay(coach?.date)}</td>
                                 <td>{coach?.bus?.busName}</td>
                                 <td>{coach?.price}</td>
+                                <td>{coach?.maximumSeats}</td>
                                 <td>
                                     <Button
                                         onClick={() =>
@@ -82,6 +84,18 @@ export default function AllCoaches() {
                                         variant="danger"
                                     >
                                         Delete
+                                    </Button>{" "}
+                                </td>
+                                <td>
+                                    <Button
+                                        onClick={() =>
+                                            navigate(
+                                                "/admin/tickets/" + coach?._id
+                                            )
+                                        }
+                                        variant="warning"
+                                    >
+                                        View Tickets
                                     </Button>{" "}
                                 </td>
                             </tr>

@@ -4,13 +4,13 @@ import {
     handleAdd,
     handleDelete,
     handleUpdate,
+    searchData,
 } from "../helpers/api-calls";
 
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
-import { ICoachContext, IConfig } from "../interfaces/index";
+import { ICoachContext, IConfig, ISeat } from "../interfaces/index";
 import { CoachContext } from "./contexts";
-import { searchData } from "../helpers/api-calls";
 
 const defaultState: ICoachContext = {
     isLoading: false,
@@ -112,11 +112,7 @@ export default function CoachProvider({
 
         const updateData = async (bus: FormData, id: string) => {
             try {
-                const config: IConfig = {
-                    "Content-Type": "multipart/form-data",
-                };
-
-                const result = await handleUpdate(API, id, bus, config);
+                const result = await handleUpdate(API, id, bus);
 
                 dispatch({ type: "UPDATE_DATA", payload: result.data });
 
@@ -124,7 +120,9 @@ export default function CoachProvider({
 
                 navigate(-1);
             } catch (error: any) {
+                alert("Error updating data");
                 dispatch({ type: "ERROR", payload: error.message });
+                return null;
             }
         };
 
@@ -151,7 +149,55 @@ export default function CoachProvider({
                 const result = await searchData(API + "/search", params);
                 return result.data;
             } catch (error: any) {
+                alert("Error searching data");
                 dispatch({ type: "ERROR", payload: error.message });
+            }
+        };
+
+        const bookTicket = async (
+            coachId: string,
+            seats: ISeat[],
+            userId: string
+        ) => {
+            try {
+                const result = await handleUpdate(API + "/book", coachId, {
+                    coachId,
+                    seats,
+                    userId,
+                });
+                return "success";
+            } catch (error: any) {
+                alert("Error booking ticket");
+                dispatch({ type: "ERROR", payload: error.message });
+                return null;
+            }
+        };
+
+        const getUserTickets = async (userId: string) => {
+            try {
+                const result = await getDataById(API + "/user-tickets", userId);
+                return result.data;
+            } catch (error: any) {
+                dispatch({ type: "ERROR", payload: error.message });
+            }
+        };
+
+        const cancelTicket = async (
+            coachId: string,
+            seats: string[],
+            userId: string
+        ) => {
+            try {
+                const result = await handleUpdate(API + "/cancel", coachId, {
+                    coachId,
+                    seats,
+                    userId,
+                });
+                return "success";
+            } catch (error: any) {
+                alert("Error booking ticket");
+                dispatch({ type: "ERROR", payload: error.message });
+                return null;
             }
         };
 
@@ -166,6 +212,9 @@ export default function CoachProvider({
             getById: getIDataById,
             clean: () => dispatch({ type: "CLEAN" }),
             search,
+            bookCoach: bookTicket,
+            getUserTickets,
+            cancelTicket,
         };
 
         return rtData;

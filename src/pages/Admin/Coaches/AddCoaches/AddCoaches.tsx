@@ -28,6 +28,7 @@ export default function AddCoaches() {
         startingTime: "",
         price: 0,
         date: "",
+        maximumSeats: 0,
     });
 
     const handleSubmit = (event: React.FormEvent): void => {
@@ -44,7 +45,8 @@ export default function AddCoaches() {
             data.destination === "" ||
             data.startingTime === "" ||
             data.price === 0 ||
-            data.date === ""
+            data.date === "" ||
+            data.maximumSeats === 0
         ) {
             alert("Please check all the fields");
             return;
@@ -141,6 +143,19 @@ export default function AddCoaches() {
                             placeholder="Enter fair per seat"
                             value={data.price}
                             name="price"
+                            onChange={handleChange}
+                        />
+                    </Form.Group>
+                    <Form.Group className="mb-3" controlId="price">
+                        <Form.Label>
+                            Maximum number of seats per person
+                        </Form.Label>
+                        <Form.Control
+                            required={true}
+                            type="number"
+                            placeholder="Enter maximum per person"
+                            value={data?.maximumSeats}
+                            name="maximumSeats"
                             onChange={handleChange}
                         />
                     </Form.Group>

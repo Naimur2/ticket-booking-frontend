@@ -11,12 +11,12 @@ export default function Public() {
     return (
         <Container>
             <Row>
-                <Col className="col-5">
+                <Col className="col-6 search">
                     <SearchForm
                         setSearchResult={(res) => setSearchResult(res)}
                     />
                 </Col>
-                <Col className="mt-5 d-flex align-items-center justify-content-center col-7">
+                <Col className="mt-5 d-flex align-items-center justify-content-center col-6">
                     {searchResult?.length > 0 && (
                         <div>
                             <p>Total {searchResult.length} results found. </p>

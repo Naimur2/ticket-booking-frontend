@@ -4,6 +4,7 @@ import { AuthContext } from "../../context/contexts";
 import { IAuthContext } from "../../interfaces/index";
 import React from "react";
 import "./NavBar.scss";
+import useAuth from "./../../hooks/useAuth";
 
 export default function NavBar() {
     const authCtx = React.useContext<IAuthContext>(AuthContext);
@@ -21,13 +22,16 @@ export default function NavBar() {
     };
 
     return (
-        <Navbar bg="dark" variant="dark">
+        <Navbar className="fixed-top" bg="dark" variant="dark">
             <Container>
                 <Link className="navbar-brand" to={getPrimaryRoute()}>
                     ZTicket
                 </Link>
                 {!authCtx.isAuthenticated ? (
                     <Nav className="ms-auto">
+                        <Link className="nav-link" to="/about">
+                            About us
+                        </Link>
                         <Link className="nav-link" to="/login">
                             Login
                         </Link>

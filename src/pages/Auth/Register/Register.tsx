@@ -38,26 +38,32 @@ export default function Register() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            const validate: IUser = await schema.validate(data, {
-                abortEarly: true,
-            });
+        if (data.password !== data.confirmPassword) {
+            alert("Passwords must match");
+        } else if (data.password.length < 8) {
+            alert("Passwords must have at least 8 characters");
+        } else {
+            try {
+                const validate: IUser = await schema.validate(data, {
+                    abortEarly: true,
+                });
 
-            if (validate) {
-                validate.role = "user";
-                const userData: IUser = {
-                    firstName: validate.firstName,
-                    lastName: validate.lastName,
-                    email: validate.email,
-                    password: validate.password,
-                    termsAccepted: validate.termsAccepted,
-                    role: validate.role,
-                };
+                if (validate) {
+                    validate.role = "user";
+                    const userData: IUser = {
+                        firstName: validate.firstName,
+                        lastName: validate.lastName,
+                        email: validate.email,
+                        password: validate.password,
+                        termsAccepted: validate.termsAccepted,
+                        role: validate.role,
+                    };
 
-                authCtx.register(userData);
+                    authCtx.register(userData);
+                }
+            } catch (error: any) {
+                alert(error.message);
             }
-        } catch (error: any) {
-            alert(error.message);
         }
     };
 

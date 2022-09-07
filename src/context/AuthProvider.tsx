@@ -1,14 +1,8 @@
-import { IAuthContext, IUser } from "../interfaces/index";
+import { IAuthContext, IData, IUser } from "../interfaces/index";
 import React from "react";
 import { AuthContext } from "./contexts";
 import axios, { AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
-
-interface IData {
-    message: string;
-    access_token?: string;
-    user?: IUser;
-}
 
 const defaultState: IAuthContext = {
     isAuthenticated: false,
@@ -25,6 +19,12 @@ const reducer = (
             return {
                 ...state,
                 isAuthenticated: true,
+                isLoading: false,
+                user: action.payload,
+            };
+        case "SET_USER":
+            return {
+                ...state,
                 isLoading: false,
                 user: action.payload,
             };
@@ -55,7 +55,11 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [state, dispatch] = React.useReducer(reducer, defaultState);
 
     const values = React.useMemo(() => {
-        const loginHandler = async (email: string, password: string) => {
+        const loginHandler = async (
+            email: string,
+            password: string,
+            coachId = ""
+        ) => {
             try {
                 dispatch({ type: "LOADING", payload: true });
                 const response: AxiosResponse<IData> = await axios.post(
@@ -69,7 +73,10 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                         "token",
                         response?.data?.access_token as string
                     );
-                    dispatch({ type: "LOGIN", payload: response.data.user });
+                    dispatch({
+                        type: "LOGIN",
+                        payload: { ...response.data.user, coachId },
+                    });
                 } else {
                     alert(response.data.message);
                 }
@@ -138,6 +145,56 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             }
         };
 
+        const getUserIngo = async (email: string) => {
+            try {
+                dispatch({ type: "LOADING", payload: true });
+                const token = localStorage.getItem("token");
+
+                const res: AxiosResponse<IData> = await axios.post(
+                    "/api/auth/user-info",
+                    { email },
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                );
+
+                dispatch({ type: "LOADING", payload: false });
+
+                if (res.status === 200 || res.status === 201) {
+                    return res?.data?.user;
+                } else {
+                    alert("Failed to get user info");
+                }
+            } catch (error: any) {
+                alert(error.message);
+            }
+        };
+
+        const updateUser = async (user: IUser) => {
+            try {
+                dispatch({ type: "LOADING", payload: true });
+                const token = localStorage.getItem("token");
+
+                const res: AxiosResponse<IData> = await axios.put(
+                    "/api/auth/update-info",
+                    user,
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                );
+
+                dispatch({ type: "LOADING", payload: false });
+
+                if (res.status === 200 || res.status === 201) {
+                    return res?.data?.user;
+                } else {
+                    alert("Failed to update user");
+                }
+            } catch (error: any) {
+                alert(error.message);
+            }
+        };
+
         const returntVal: IAuthContext = {
             isAuthenticated: state.isAuthenticated,
             isLoading: state.isLoading,
@@ -147,6 +204,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             register: registerHandler,
             validateToken: validateTokenHandler,
             clean: () => dispatch({ type: "CLEAN" }),
+            getUser: getUserIngo,
+            updateUser: updateUser,
         };
 
         return returntVal;
